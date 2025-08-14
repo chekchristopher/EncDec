@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncDec</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: white;
+            --secondary: green;
+            --accent: blue;
+            --dark: rgba(128, 128, 128, 0.477);
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            color: var(--primary);
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main{
+            display: grid;
+            gap: 0;
+            min-width: 100vw;
+            min-height:100vh;
+            height: auto;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            grid-template-areas:
+            "one one one"
+            "two two three"
+            "two two three"
+            "two two three"
+            "two two three"
+            "two two four";
+        }
+
+        .one {
+            grid-area: one;
+            background-color: var(--secondary);
+            border: 0.1em solid var(--primary);
+        }
+        .two {
+            grid-area: two;
+            background-color: var(--secondary);
+            border: 0.1em solid green;
+        }
+        .three {
+            grid-area: three;
+            background-color: var(--dark);
+            border: 0.1em solid green;
+        }
+        .four {
+            grid-area: four;
+            background-color: var(--dark);
+            border: 0.1em solid green;
+        }
+        .five {
+            grid-area: five;
+            background-color: var(--secondary);
+            border: 0.1em solid green;
+        }
+
+        .header{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        .header b{
+            font-size:xx-large;
+        }
+
+        
+        .header2 {
+            margin: 11px;
+        }
+        .encryption {
+            margin: 10px;
+            background-color: rgba(255, 255, 0, 0.274);
+            border-radius: 10px;
+        }
+        .encryption b {
+            font-size: x-large;
+        }
+        input[type="text"] {
+            width: 80%;
+            height: auto;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 120px;
+            height: auto;
+            padding: 10px;
+        }
+        button {
+            width: 60px;
+        }
+        .encryption-container {
+            display: grid;
+            margin: 10px;
+        }
+
+        .decryption {
+            margin: 10px;
+            background-color: rgba(255, 255, 0, 0.274);
+            border-radius: 10px;
+        }
+        .decryption b {
+            font-size: x-large;
+        }
+        .decryption-container {
+            display: grid;
+            margin: 10px;
+        }
+
+        .history{
+            display: flex;
+            flex-direction: column;
+        }
+        .history b {
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                grid-template-columns: 1fr; /* single column */
+                grid-template-rows: auto;
+                grid-template-areas:
+                    "one"
+                    "two"
+                    "three"
+                    "four";
+            }
+
+            .how {
+                display: flex;  
+                margin-top: -20%;
+            }
+        }
+
+        @media (min-width:350px) and (max-width:420px) {
+            .how {
+                margin-top: 10%;
+            }
+        }
+
+        @media (min-width:760px) and (max-width:780px) {
+            .how {
+                margin-top: -11%;
+            }
+        }
+
+        .how {
+            position:  relative;
+            display: block;
+            background-color: var(--dark);
+            color: black;
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .how h1 {
+            text-align: center;
+        }
+
+        .info3 {
+            margin:10px;
+        }
+
+        .how span {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--accent);
+        }
+
+        .footer {
+            background-color: var(--secondary);
+            margin-bottom: -14px;
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="one">
+            <div class="header">
+                <b>EncDec</b>
+                <i>Encrypt & Decrypt</i>
+            </div>
+            <div class="header2">
+                <p class="info1"> Protect informations from unauthorised personnels</p>
+                <p class="info2">EncDec by  Cybersecurity Specialists</p>
+            </div>
+        </div>
+        <div class="two">
+            <div class="encryption">
+                <div class="encryption-container">
+                    <form method="POST">
+                        <b>Encryption</b> <br>
+                        <input type="text" placeholder="input text to encrypt" name="encrypt_text" required>
+                        <p>Password</p>    
+                        <input type="number" placeholder="encryption key" name="encrypt_password"><br>
+                        <button type="submit" name="encrypt">Encrypt</button>
+                    </form>
+                    {% if encrypted %}
+                        <div class="result">
+                            Encrypted text: {{ encrypted }}<br>
+                            {% if shift_used %}
+                            Shift Key Used: {{ shift_used}}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="decryption">
+                <div class="decryption-container">
+                    <form method="POST">
+                        <b>Decryption</b> <br>
+                        <input type="text" placeholder="input text to decrypt" name="decrypt_text" required> <br>
+                        <p>Password</p>    
+                        <input type="number" placeholder="decryption key" name="decrypt_password"> <br>
+                        <button type="submit" name="decrypt">decrypt</button>
+                    </form>
+                    {% if decrypted %}
+                        <div class="result">
+                            Decrypted text: {{ decrypted }}<br>
+                            {% if shift_used %}
+                            Key Used: {{ shift_used}}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% if error %}
+                        <div class="result">{{ error }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="three">
+            <div class="history" style="color:black">
+                <b>History</b>
+                {% if history %}
+                    <ul>
+                        {% for item in history %}
+                        <li>{{item.action}}: "{{ item.input }}" --> "{{ item.output}}" </li>
+                        {% endfor %}
+                    </ul>
+                    <form method="POST">
+                        <button type="submit" name="clear_history">Clear history</button>
+                    </form>
+                {% else %}
+                <p>No history yet</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="four" style="color:black;">
+            <div class="four-text" style="margin:10px">
+            Cybersecurity Specialists✅
+            Html✅
+            Css✅
+            Python(flask)✅ <br>
+            </div>
+        </div>
+        <div class="five"></div>
+    </div>
+    <div class="how">
+        <h1>🔐HOW TO USE</h1>
+        <div class="info3">
+
+            EncDec helps you encrypt and decrypt text using the Caesar Cipher method.<br>
+            <p>Follow these steps:</p>
+
+            <h2 style="color: var(--secondary)">Encryption</h2>
+            <ul>
+
+                <list>Enter the text you want to secure in the <span>"Input text to encrypt"</span> field.</list><br>
+
+                Enter a numeric key (your password) in the <span>"encryption key"</span> field. <br>
+                Note:🔷 encryption key can be as many as you want e.g, 89282691 can be your encryption key.<br>
+
+                This number will be used to shift the letters in your message.<br>
+
+                Example: If your key is <span>"3"</span>, <span>“HELLO”</span> becomes <span>“KHOOR.”</span><br>
+
+                Click the Encrypt button.<br>
+
+                Copy the encrypted text and remember your key, you’ll need it to decrypt later.
+            </ul>
+
+            <h2 style="color: var(--secondary)">Decryption</h2>
+                <ul>
+
+                    Enter the encrypted text in the <span>"Input text to decrypt"</span> field.<br>
+
+                    Enter the same numeric key that was used for encryption in the <span>"decryption key</span> field.<br>
+
+                    Click the Decrypt button.<br>
+
+                    The original text will appear.
+               </ul>
+
+            <h2 style="color: var(--secondary)">History</h2>
+
+            Every encryption and decryption action you perform is saved in the History panel.
+
+            The history shows the action, input, and output.<br>
+
+            To clear all saved actions, click the <span>"Clear History"</span> button.<br>
+            Note: 🔷All history are automatically cleared upon closing web tab.
+
+            <h2 style="color: var(--secondary)">⚠Important Notes</h2>
+
+            You must always use the same key for encryption and decryption.
+
+            If you forget the key, the message cannot be decrypted.
+
+            Non-alphabet characters (numbers, spaces, punctuation) remain unchanged
+        </div>
+    </div>
+    <div class="footer">
+            <p>🟢Created by CHEKWUBE CHRISTOPHER</p>
+            <p>&copy;EncDec 2025</p>
+     </div>
+</body>
+</html>
